@@ -27,4 +27,23 @@ public class FridgeCommand : ControllerBase
         FridgeAndRecipesAPI.FridgeState.FridgeSession.WithdrawProduct(product.Name);
         return Ok();
     }
+
+    [EnableCors("MyOrigin")]
+    [HttpPut]
+    [Route("takeProducts")]
+    public IActionResult Put([FromBody] IEnumerable<Product> products)
+    {
+        try
+        {
+            var leftOverProducts = 
+                FridgeAndRecipesAPI.FridgeState.FridgeSession
+                .TakeProducts(products);
+            return Ok(leftOverProducts);
+        }
+        catch (Exception e){
+            return BadRequest("not enough products");
+        }
+
+        
+    }
 }
