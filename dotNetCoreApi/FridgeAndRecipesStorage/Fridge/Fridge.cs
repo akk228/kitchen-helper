@@ -2,127 +2,141 @@
 
 public class Fridge : IFridge
 {
-    private FridgeState _state;
-    private Object _fridgeLock = new Object();
-
     private Dictionary<string, Product> _products;
+    private readonly Object _lock = new object();
+    
     public Fridge()
     {
-        _products = new Dictionary<string, Product>(StringComparer.OrdinalIgnoreCase);
-        _state = FridgeState.Ready;
-    }
+        _products = FridgeGateway
+            .OpenFridge()
+            .GetAllProducts()
+            .ToDictionary(
+                item => item.Name,
+                item => item,
+                StringComparer.OrdinalIgnoreCase);
 
+    }
+    
     public Fridge(IEnumerable<Product> products)
     {
         _products = products.ToDictionary(
             item => item.Name,
             item => item,
             StringComparer.OrdinalIgnoreCase);
-        _state = FridgeState.Ready;
-
     }
 
     public IEnumerable<Product> GetAllProducts()
     {
-            lock(_fridgeLock)
-            {
-                return _products.Select(x => x.Value);
-            }
+        lock (_lock)
+        {
+            return _products.Select(x => x.Value);   
+        }
     }
 
-    public Product FindProduct(string name)
+    public Product? FindProduct(string name)
     {
-            lock (_fridgeLock)
-            {
-                _products.TryGetValue(name, out Product? product);
-                return product;
-            }
+        lock (_lock)
+        {
+            _products.TryGetValue(name, out Product? product);
+            return product;   
+        }
     }
     public Product AddProduct(Product product)
     {
-        lock (_fridgeLock)
+        lock (_lock)
         {
-            if (!_products.TryAdd(product.Name, product))
-            {
-                _products[product.Name].Amount += product.Amount;
-            }
+            var updatedProduct =  AddProductInternal(product);
+
+            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
+            
+            return updatedProduct;
         }
-
-        return _products[product.Name];
     }
-
+    
     public void WithdrawProduct(string productName)
     {
-        lock (_fridgeLock)
+        lock (_lock)
         {
             if (!_products.Remove(productName))
             {
                 throw new Exception("Can't remove product that isn't in the Fridge");
-            };
+            }
+
+            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
         }
     }
 
     public IEnumerable<Product> AddProducts(IEnumerable<Product> products)
     {
-        var productsList = new List<Product>();
-        lock (_fridgeLock)
+        lock (_lock)
         {
+            var productsList = new List<Product>();
+        
             foreach (var product in products)
             {
-                productsList.Add(AddProduct(product));
+                productsList.Add(AddProductInternal(product));
             }
+        
+            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
+        
+            return productsList;   
         }
-
-        return productsList;
     }
 
     public IEnumerable<Product> TakeProducts(IEnumerable<Product> products)
     {
-        var productsList = new List<Product>();
-
-        lock (_fridgeLock)
+        lock (_lock)
         {
+            var productsList = new List<Product>();
+
             foreach(var product in products)
             {
-                var productUsed = TakeProduct(product);
+                productsList.Add(TakeProduct(product));
+            }
 
-                if(productUsed != null)
+            foreach (var product in productsList)
+            {
+                if (product.Amount == 0)
                 {
-                    productsList.Add(productUsed);
+                    _products.Remove(product.Name);
+                }
+                else
+                {
+                    _products[product.Name] = product;
                 }
             }
+            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
+
+            return productsList;   
         }
-        return productsList;
     }
     
     private Product TakeProduct(Product productToUse)
     {
-        lock (_fridgeLock)
+        if (_products.TryGetValue(productToUse.Name, out var product))
         {
-            if (_products.TryGetValue(productToUse.Name, out var product))
+            var remindingAmount = product.Amount - productToUse.Amount;
+
+            if (remindingAmount >= 0)
             {
-                var remindingAmount = product.Amount - productToUse.Amount;
-
-                if (remindingAmount > 0)
+                return new Product()
                 {
-                    _products[product.Name].Amount = remindingAmount;
-                    return _products[product.Name];
-                }
-                else if (remindingAmount == 0)
-                {
-                    _products.Remove(product.Name);
-                    return null;
-                }
+                    Name = productToUse.Name,
+                    Amount = remindingAmount,
+                    MeasurmentUnit = productToUse.MeasurmentUnit
+                };
             }
-
-            throw new Exception("No such product");
         }
-        
+        throw new Exception("No such product, or not enough");
     }
     
-    
-    public static Fridge OpenFridge()
+    private Product AddProductInternal(Product product)
     {
-        throw new NotImplementedException();
+        if (!_products.TryAdd(product.Name, product))
+        {
+            _products[product.Name].Amount += product.Amount;
+        }
+        return _products[product.Name];
     }
+
 }

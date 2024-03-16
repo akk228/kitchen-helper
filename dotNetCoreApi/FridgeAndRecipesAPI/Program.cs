@@ -1,13 +1,18 @@
 using FridgeAPI = FridgeAndRecipesAPI;
 using FridgeAndRecipesStorage.Fridge;
 using System.Text.Json.Serialization;
+using FridgeAndRecipesStorage.Recipies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<Fridge>(new Fridge());
+builder.Services.AddSingleton<RecipesCollection>(new RecipesCollection());
+
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "MyOrigin",
@@ -16,8 +21,13 @@ builder.Services.AddCors(options =>
                           builder.WithOrigins("http://localhost:3000");
                       });
 });// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddCors(options => 
+    options.AddDefaultPolicy(policy => 
+        policy.WithOrigins("http://localhost:3000")
+));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 //builder.Services.AddSingleton
 var app = builder.Build();
 
@@ -37,6 +47,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-FridgeAPI.FridgeState.FridgeSession = FridgeGateway.OpenFridge();
-FridgeAPI.RecipeState.RecipesSession = new FridgeAndRecipesStorage.Recipies.RecipesCollection();
 app.Run();

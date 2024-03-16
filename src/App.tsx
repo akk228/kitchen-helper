@@ -13,9 +13,9 @@ export default class App extends Component {
           <header className="App-header">
             <h1>Help you with your kitchen</h1>
           </header>
-          <nav className='navbar'>
-          <ul>
-            <li className='n'>
+          <nav className='nav'>
+          <ul className='ul'>
+            <li className='li'>
               <Link to="/">Home</Link>
             </li>
             <li>

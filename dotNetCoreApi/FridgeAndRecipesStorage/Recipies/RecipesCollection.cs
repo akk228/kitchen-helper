@@ -1,53 +1,38 @@
-﻿using FridgeAndRecipesStorage.Fridge;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FridgeAndRecipesStorage.Recipies
+﻿namespace FridgeAndRecipesStorage.Recipies
 {
     public class RecipesCollection : IRecipesCollection
     {
-        private IList<Recipe> _recipes;
+        private readonly IDictionary<string, Recipe> _recipes;
 
-        public RecipesCollection() { 
-            _recipes = new List<Recipe>();
-            _recipes.Add(
-                new Recipe()
-                {
-                    Name = "Omlet",
-                    Description = "Don't u know how cook a fucking omlet???",
-                    Ingredients = new List<Product>(
-                        new Product[]
-                        {
-                            new Product()
-                            {
-                                Name = "Eggs",
-                                Amount = 3,
-                                MeasurmentUnit = Units.unit
-                            },
-                            new Product()
-                            {
-                                Name = "Milk",
-                                Amount = 150,
-                                MeasurmentUnit= Units.ml
-                            }
-                        })
-                });
-        }
-        public IList<Recipe> GetRecipes()
+        public RecipesCollection()
         {
-            return _recipes;
+            _recipes = RecipesCollectionGateway
+                .OpenCollection()
+                .ToDictionary(recipe => recipe.Name,
+                    recipe => recipe,
+                    StringComparer.OrdinalIgnoreCase);
         }
-        public bool AddRecipe(Recipe recipe)
+        
+        public IEnumerable<Recipe> GetRecipes()
         {
-            throw new NotImplementedException();
+            return _recipes.Select( recipe => recipe.Value);
         }
-
-        public Recipe GetRecipeByName(string name)
+        
+        public Recipe AddRecipe(Recipe recipe)
         {
-            throw new NotImplementedException();
+            if (!_recipes.TryAdd(recipe.Name, recipe))
+            {
+                throw new Exception("Recipe with similar name exists");
+            }
+            RecipesCollectionGateway.UpdateCollection(_recipes.Select(x=>x.Value).ToList());
+            return recipe;
+        }
+        
+        public IEnumerable<Recipe> GetRecipesByName(string name)
+        {
+            return _recipes
+                .Where(x => x.Key.Contains(name, StringComparison.OrdinalIgnoreCase))
+                .Select(y=> y.Value);
         }
 
         public Recipe ModifyRecipe(Recipe recipe)

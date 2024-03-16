@@ -8,18 +8,24 @@ namespace FridgeAndRecipesAPI.FridgeAccess;
 [Route("Fridge")]
 public class FridgeQuery : ControllerBase
 {
+    private readonly Fridge _fridge;
+    public FridgeQuery(Fridge fridge)
+    { 
+        _fridge = fridge;
+    }
+
     [EnableCors("MyOrigin")]
     [HttpGet("Content")]
     public IEnumerable<Product> Get()
     {
-        return FridgeState.FridgeSession.GetAllProducts(); ;
+        return _fridge.GetAllProducts(); ;
     }
 
     [EnableCors("MyOrigin")]
     [HttpGet]
     [Route("Product")]
-    public Product Get(string name)
+    public Product? Get(string name)
     {
-        return FridgeState.FridgeSession.FindProduct(name);
+        return _fridge.FindProduct(name);
     }
 }

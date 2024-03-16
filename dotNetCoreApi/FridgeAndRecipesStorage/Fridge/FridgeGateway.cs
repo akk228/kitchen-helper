@@ -6,49 +6,73 @@ public static class FridgeGateway
     private const string FridgePath = @"..\FridgeStorage\";
 
     private static string FullPath;
-    private static bool FridgeIsOpened;
 
+    private static Object _lock = new object();
     public static Fridge OpenFridge()
     {
-        if (!Directory.Exists(FridgePath))
+        lock(_lock)
         {
-            Directory.CreateDirectory(FridgePath);
-        }
-
-        if (!File.Exists(FridgePath + FridgeName))
-        {
-            File.Create(FridgePath + FridgeName);
-            return new Fridge();
-        };
-
-        FullPath = Path.GetFullPath(FridgePath + FridgeName);
-        
-        var products = new List<Product>();
-        var fridgeContent = File.ReadAllLines(FullPath);
-
-        foreach (var item in fridgeContent)
-        {
-            var product = item.Split(',');
-            products.Add(new Product()
+            if (!Directory.Exists(FridgePath))
             {
-                Name = product[0],
-                Amount = Int32.Parse(product[1]),
-                MeasurmentUnit = (Units) Enum.Parse(typeof(Units), product[2], true)
-            });
-        }
+                Directory.CreateDirectory(FridgePath);
+            }
+
+            if (!File.Exists(FridgePath + FridgeName))
+            {
+                File.Create(FridgePath + FridgeName);
+                return new Fridge();
+            };
+
+            FullPath = Path.GetFullPath(FridgePath + FridgeName);
         
-        FridgeIsOpened = true;
-        return new Fridge(products);
+            var products = new List<Product>();
+            var fridgeContent = File.ReadAllLines(FullPath);
+
+            foreach (var item in fridgeContent)
+            {
+                var product = item.Split(',');
+                products.Add(new Product()
+                {
+                    Name = product[0],
+                    Amount = Int32.Parse(product[1]),
+                    MeasurmentUnit = (Units) Enum.Parse(typeof(Units), product[2], true)
+                });
+            }
+        
+            return new Fridge(products);
+        }
+       
     }
 
-    public static bool FridgeUpdate(Fridge fridge)
+    public static bool FridgeUpdate(IEnumerable<Product> products)
     {
-        var updatedFridge = File.OpenWrite(FridgePath);
-
-        foreach(var product in fridge.GetAllProducts())
+        lock (_lock)
         {
-            
+            try
+            {
+                FullPath = Path.GetFullPath(FridgePath + FridgeName);
+
+                using (var updatedFridge = File.CreateText(FullPath))
+                {
+                    foreach (var product in products)
+                    {
+                        var productInfo = new string[] 
+                        {
+                            product.Name,
+                            product.Amount.ToString(),
+                            product.MeasurmentUnit.ToString()
+                        };
+
+                        updatedFridge.WriteLine(string.Join(',', productInfo));
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }   
         }
-        return true;
     }
 }

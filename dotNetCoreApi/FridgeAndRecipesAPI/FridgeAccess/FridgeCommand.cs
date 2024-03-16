@@ -9,14 +9,18 @@ namespace FridgeAndRecipesAPI.FridgeAccess;
 [Route("Fridge")]
 public class FridgeCommand : ControllerBase
 {
+    private readonly Fridge _fridge;
+    public FridgeCommand(Fridge fridge)
+    {
+        _fridge = fridge;
+    }
+
     [EnableCors("MyOrigin")]
     [HttpPost]
     [Route("addProduct")]
     public IActionResult Post([FromBody] Product product)
     {
-        FridgeAndRecipesAPI.FridgeState.FridgeSession.AddProduct(product);
-        var productToReturn = FridgeAndRecipesAPI.FridgeState.FridgeSession.FindProduct(product.Name);
-        return Ok(productToReturn);
+        return Ok(_fridge.AddProduct(product));
     }
 
     [EnableCors("MyOrigin")]
@@ -24,7 +28,7 @@ public class FridgeCommand : ControllerBase
     [Route("deleteProduct")]
     public IActionResult Delete([FromBody] Product product)
     {
-        FridgeAndRecipesAPI.FridgeState.FridgeSession.WithdrawProduct(product.Name);
+        _fridge.WithdrawProduct(product.Name);
         return Ok();
     }
 
@@ -33,11 +37,8 @@ public class FridgeCommand : ControllerBase
     [Route("takeProducts")]
     public IActionResult Put([FromBody] IEnumerable<Product> products)
     {
-        try
-        {
-            var leftOverProducts = 
-                FridgeAndRecipesAPI.FridgeState.FridgeSession
-                .TakeProducts(products);
+        try{
+            var leftOverProducts = _fridge.TakeProducts(products);
             return Ok(leftOverProducts);
         }
         catch (Exception e){

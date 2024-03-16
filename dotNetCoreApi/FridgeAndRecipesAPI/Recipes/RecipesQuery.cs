@@ -7,13 +7,18 @@ namespace FridgeAndRecipesAPI.Recipes
     [Route("Recipes")]
     public class RecipesQuery : ControllerBase
     {
-        public RecipesQuery() { }
+        private readonly RecipesCollection _recipesCollection;
+
+        public RecipesQuery(RecipesCollection recipesCollection)
+        {
+            _recipesCollection = recipesCollection;
+        }
 
         [EnableCors("MyOrigin")]
         [HttpGet]
-        public IList<Recipe> Get()
+        public IActionResult Get()
         {
-            return FridgeAndRecipesAPI.RecipeState.RecipesSession.GetRecipes();
+            return Ok(_recipesCollection.GetRecipes());
         }
     }
 }

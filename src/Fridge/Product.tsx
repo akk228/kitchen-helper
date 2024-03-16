@@ -8,25 +8,33 @@ export interface IProduct {
     measurmentUnit: Units;
 }
 
-export class Product extends Component<{callback: any, product: IProduct}, IProduct>{
-   constructor(props:{callback: any, product: IProduct}){
+export class Product extends Component<{callback: any, product: IProduct, edit: boolean}, {product: IProduct, edit: boolean}>{
+   constructor(props:{callback: any, product: IProduct, edit: boolean}){
     super(props)
    }
 
-    static getDerivedStateFromProps(props: {callback: any, product: IProduct}, state: IProduct){
-        return  props.product;
+    static getDerivedStateFromProps(props: {callback: any, product: IProduct, edit: boolean}, state: {product: IProduct, edit: boolean}){
+        return  {product: props.product, edit: props.edit};
     }
 
     handleDelete(event: any){
-        UpdateFridgeContent.deleteProduct(this.state, this.props.callback, undefined);
+        UpdateFridgeContent.deleteProduct(this.state.product, this.props.callback, undefined);
         
     }
 
     render(): React.ReactNode {
         return (
-            <article key={this.state.name}>{this.state.name}: {this.state.amount} {this.state.measurmentUnit}
-                <button onClick={this.handleDelete.bind(this)}>x</button>
-            </article>
+            <tr>
+                <td>{this.state.product.name}</td>
+                <td>{this.state.product.amount}</td>
+                <td>{this.state.product.measurmentUnit}</td>
+                {
+                    this.state.edit &&
+                    <td>
+                        <button onClick={this.handleDelete.bind(this)}>x</button>
+                    </td>
+                }
+            </tr>
         );
     }
 }

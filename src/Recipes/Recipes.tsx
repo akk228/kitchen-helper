@@ -9,7 +9,8 @@ interface IRecipes {
 export class Recipes extends React.Component<{}, IRecipes>{
 
     render(): React.ReactNode {
-        return (<>
+        return (
+        <div className="centered-div">
             <h1>
                 List of recipes
             </h1>
@@ -17,20 +18,10 @@ export class Recipes extends React.Component<{}, IRecipes>{
                 {this.state?.recipes?.map(recipe => {
                     return (
                         <Recipe {...recipe}/>
-                        // <article key={recipe.name}>
-                        //     <h3>{recipe.name}</h3>
-                        //     <ol>
-                        //         {recipe?.ingredients?.map((product) => {
-                        //             return (
-                        //                 <li key={product.name}>{product.name}</li>
-                        //             );
-                        //         })}
-                        //     </ol>
-                        // </article>
                         );
                 })}
             </div>
-        </>)
+        </div>)
     }
 
     componentDidMount(): void {

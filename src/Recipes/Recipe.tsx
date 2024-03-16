@@ -1,5 +1,7 @@
 import React from "react";
 import { IProduct } from "../Fridge/Product";
+import { Cooking } from "./Cooking";
+import ProductTable from "../Fridge/ProductTable";
 
 export interface IRecipe {
     name: string,
@@ -15,14 +17,13 @@ export class Recipe extends React.Component<IRecipe,IRecipe> {
         return (
             <article key={this.state?.name}>
                 <h3>{this.state?.name}</h3>
-                    <ol>
-                        {this.state?.ingredients?.map((product) => {
-                            return (
-                                <li key={product.name}>{product.name}</li>
-                            );
-                        })}
-                    </ol>
-                    
+                <h5>Ingredients</h5>
+                    <ProductTable
+                        products={this.state.ingredients}
+                        onProductsChange={()=> {}}
+                        edit={false}
+                    />
+                <Cooking {...this.state}/>
             </article>
         );
     }

@@ -1,5 +1,6 @@
 import React from "react";
-import { IRecipe, Recipe } from "./Recipe";
+import { IRecipe } from "./Recipe";
+import { Cook } from "./RecipesApi/Cook";
 
 interface ICooking{
     recipe: IRecipe
@@ -12,14 +13,10 @@ export class Cooking extends React.Component<IRecipe, ICooking>{
     }
 
     handleTakeIngredients(){
-        alert("Confirm taking")
+        Cook.takeProducts(this.state.recipe.ingredients, ()=>{}, undefined)
     }
 
     render(): React.ReactNode {
-        return (
-            <>
-                <button onClick={this.handleTakeIngredients}>Take ingredients from fridge</button>
-            </>
-            );
+        return  <button onClick={this.handleTakeIngredients.bind(this)}>Take ingredients from fridge</button>;
     }
 }

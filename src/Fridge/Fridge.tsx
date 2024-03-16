@@ -1,7 +1,9 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import { IProduct, Product } from "./Product";
 import { AddProductForm } from "./AddProduct";
 import { FridgeContent } from "./FridgeApi/GetProducts";
+import ProductTable from "./ProductTable";
+import '../App.css';
 
 interface IFridgeState {
     addEnabled: boolean;
@@ -9,49 +11,48 @@ interface IFridgeState {
 }
 
 class Fridge extends Component<any, IFridgeState> {
-    constructor(props: IFridgeState) {
+    constructor(props: any){
         super(props);
         this.state = {
             addEnabled: false,
             products: []
         }
-
-    }
-
-    addProduct(): void {
-        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content, addEnabled: false }));
-    }
-
-    onDelete() {
-        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content }));
     }
 
     handleAddItemMenu() {
         this.setState({ addEnabled: !this.state.addEnabled })
     }
 
+    handleAddProduct(): void {
+        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content, addEnabled: false }));
+    }
+
+    handleStateChange(): void {
+        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content }));
+    }
+
     public render(): React.ReactNode {
         return (
-            <>
+            <div className="centered-div">
                 <button
                     onClick={this.handleAddItemMenu.bind(this)}>
                     {!this.state.addEnabled ? 'Add Item' : 'Cancel'}
                 </button>
                 {this.state.addEnabled && 
-                <AddProductForm onAdd={this.addProduct.bind(this)} />}
-                <div>
-                    {this.state.products?.map((product) => 
-                        <Product 
-                            callback={this.onDelete.bind(this)} 
-                            product={product}
-                        />)}
-                </div>
-            </>
+                <AddProductForm 
+                    onAdd={this.handleAddProduct.bind(this)} 
+                />}
+                <ProductTable 
+                    products={this.state.products} 
+                    onProductsChange={this.handleStateChange.bind(this)}
+                    edit={true}
+                />
+            </div>
         );
     }
 
     componentDidMount(): void {
-        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content }));
+        this.handleStateChange();
     }
 }
 

@@ -9,9 +9,9 @@ namespace FridgeAndRecipesStorage.Recipies
 {
     public interface IRecipesCollection
     {
-        IList<Recipe> GetRecipes();
-        Recipe GetRecipeByName(string name);
-        bool AddRecipe(Recipe recipe);
+        IEnumerable<Recipe> GetRecipes();
+        IEnumerable<Recipe> GetRecipesByName(string name);
+        Recipe AddRecipe(Recipe recipe);
         bool RemoveRecipe(Recipe recipe);
         Recipe ModifyRecipe(Recipe recipe);
     }
