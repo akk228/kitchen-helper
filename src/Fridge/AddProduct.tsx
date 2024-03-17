@@ -3,7 +3,11 @@ import { IProduct } from "./Product";
 import Units from "../Entities/Units";
 import { UpdateFridgeContent } from "./FridgeApi/UpdateProducts";
 
-export class AddProductForm extends Component<any, IProduct> {
+interface IAddProductFormProps {
+  onAdd: (product: IProduct) => void
+}
+
+export class AddProductForm extends Component<IAddProductFormProps, IProduct> {
   constructor(props: any) {
     super(props);
     this.state = { name: "", amount: 0, measurmentUnit: "gr" };
@@ -13,7 +17,7 @@ export class AddProductForm extends Component<any, IProduct> {
 
   handleSubmit(event: any) {
     event.preventDefault();
-    UpdateFridgeContent.addProduct(this.state, this.props.onAdd, undefined);
+    this.props.onAdd(this.state);
   }
 
   render(): React.ReactNode {

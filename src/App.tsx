@@ -4,6 +4,7 @@ import Fridge from './Fridge/Fridge';
 import Home from './Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { Recipes } from './Recipes/Recipes';
+import AddRecipeForm from './Recipes/AddRecipe';
 
 export default class App extends Component {
   render (){
@@ -24,6 +25,9 @@ export default class App extends Component {
             <li>
               <Link to="/recipes">Recipes</Link>
             </li>
+            <li>
+              <Link to="/recipes/add">Add recipe</Link>
+            </li>
           </ul>
         </nav>
         </div>
@@ -32,6 +36,7 @@ export default class App extends Component {
           <Route path="/fridge" element={<Fridge/>}/>
           <Route path="/recipes" element={<Recipes/>}/>
           <Route path="/" element={<Home/>}/>
+          <Route path="/recipes/add" element={<AddRecipeForm/>}/>
         </Routes>
       
        

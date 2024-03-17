@@ -12,7 +12,7 @@ namespace FridgeAndRecipesStorage.Recipies
         IEnumerable<Recipe> GetRecipes();
         IEnumerable<Recipe> GetRecipesByName(string name);
         Recipe AddRecipe(Recipe recipe);
-        bool RemoveRecipe(Recipe recipe);
+        bool RemoveRecipe(string name);
         Recipe ModifyRecipe(Recipe recipe);
     }
 }

@@ -1,8 +1,11 @@
-﻿namespace FridgeAndRecipesStorage.Recipies
+﻿using System.Runtime.InteropServices.JavaScript;
+
+namespace FridgeAndRecipesStorage.Recipies
 {
     public class RecipesCollection : IRecipesCollection
     {
         private readonly IDictionary<string, Recipe> _recipes;
+        private readonly Object _lock = new Object();
 
         public RecipesCollection()
         {
@@ -15,34 +18,60 @@
         
         public IEnumerable<Recipe> GetRecipes()
         {
-            return _recipes.Select( recipe => recipe.Value);
+            lock (_lock)
+            {
+                return _recipes.Select( recipe => recipe.Value);
+            }
         }
         
         public Recipe AddRecipe(Recipe recipe)
         {
-            if (!_recipes.TryAdd(recipe.Name, recipe))
+            lock (_lock)
             {
+                if (_recipes.TryAdd(recipe.Name, recipe))
+                {
+                    RecipesCollectionGateway.UpdateCollection(_recipes.Select(x=>x.Value).ToList());
+                    return recipe; 
+                } 
                 throw new Exception("Recipe with similar name exists");
             }
-            RecipesCollectionGateway.UpdateCollection(_recipes.Select(x=>x.Value).ToList());
-            return recipe;
         }
         
         public IEnumerable<Recipe> GetRecipesByName(string name)
         {
-            return _recipes
-                .Where(x => x.Key.Contains(name, StringComparison.OrdinalIgnoreCase))
-                .Select(y=> y.Value);
+            lock (_lock)
+            {
+                return _recipes
+                    .Where(x => x.Key.Contains(name, StringComparison.OrdinalIgnoreCase))
+                    .Select(y=> y.Value);   
+            }
         }
 
         public Recipe ModifyRecipe(Recipe recipe)
         {
-            throw new NotImplementedException();
+            lock (_lock)
+            {
+                if (_recipes.ContainsKey(recipe.Name))
+                {
+                    _recipes[recipe.Name] = recipe;
+                    RecipesCollectionGateway.UpdateCollection(_recipes.Select(x=>x.Value).ToList());
+                    return _recipes[recipe.Name];
+                }
+            }
+            throw new Exception("No such Recipe");   
         }
 
-        public bool RemoveRecipe(Recipe recipe)
+        public bool RemoveRecipe(string name)
         {
-            throw new NotImplementedException();
+            lock (_lock)
+            {
+                if (_recipes.Remove(name))
+                {
+                    RecipesCollectionGateway.UpdateCollection(_recipes.Select(x=>x.Value).ToList());
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

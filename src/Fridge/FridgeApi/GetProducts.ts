@@ -2,8 +2,6 @@ import {IProduct, Product} from "../Product";
 
 export class FridgeContent {
     static getFridgecontent(callback:any): void {
-
-        
         const callToFridge = new Promise<IProduct[]>(function (resolve, reject){
             const getProductsCall: XMLHttpRequest = new XMLHttpRequest();
             const url: string = "http://localhost:5149/Fridge/Content";

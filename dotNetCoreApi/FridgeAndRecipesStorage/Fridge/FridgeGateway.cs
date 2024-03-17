@@ -66,7 +66,6 @@ public static class FridgeGateway
                         updatedFridge.WriteLine(string.Join(',', productInfo));
                     }
                 }
-
                 return true;
             }
             catch (Exception e)

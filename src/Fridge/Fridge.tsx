@@ -3,6 +3,7 @@ import { IProduct, Product } from "./Product";
 import { AddProductForm } from "./AddProduct";
 import { FridgeContent } from "./FridgeApi/GetProducts";
 import ProductTable from "./ProductTable";
+import { UpdateFridgeContent } from "./FridgeApi/UpdateProducts";
 import '../App.css';
 
 interface IFridgeState {
@@ -23,12 +24,15 @@ class Fridge extends Component<any, IFridgeState> {
         this.setState({ addEnabled: !this.state.addEnabled })
     }
 
-    handleAddProduct(): void {
-        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content, addEnabled: false }));
+    handleAddProduct(product: IProduct): void {
+        UpdateFridgeContent.addProduct(
+            product,
+            this.handleStateChange.bind(this),
+            undefined);
     }
 
     handleStateChange(): void {
-        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content }));
+        FridgeContent.getFridgecontent((content: any) => this.setState({ products: content, addEnabled: false }));
     }
 
     public render(): React.ReactNode {

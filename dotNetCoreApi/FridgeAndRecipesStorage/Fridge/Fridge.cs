@@ -138,5 +138,4 @@ public class Fridge : IFridge
         }
         return _products[product.Name];
     }
-
 }

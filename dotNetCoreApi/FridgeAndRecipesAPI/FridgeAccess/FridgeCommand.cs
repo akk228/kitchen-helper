@@ -37,14 +37,13 @@ public class FridgeCommand : ControllerBase
     [Route("takeProducts")]
     public IActionResult Put([FromBody] IEnumerable<Product> products)
     {
-        try{
+        try
+        {
             var leftOverProducts = _fridge.TakeProducts(products);
             return Ok(leftOverProducts);
         }
         catch (Exception e){
             return BadRequest("not enough products");
         }
-
-        
     }
 }

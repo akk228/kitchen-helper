@@ -1,7 +1,8 @@
 import { IRecipe } from "../Recipe";
 
 export class GetRecipes {
-    static getAllRecipes(getRecipes: any): void{
+    static getAllRecipes(getRecipes: (recipes: IRecipe[]) => void): void
+    {
         const url = "/Recipes";
         fetch(
             url,

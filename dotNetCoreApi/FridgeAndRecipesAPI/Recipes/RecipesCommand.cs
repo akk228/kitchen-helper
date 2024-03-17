@@ -17,7 +17,6 @@ public class RecipesCommand : ControllerBase
     
     [EnableCors("MyOrigin")]
     [HttpPost]
-    [Route("addRecipe")]
     public IActionResult Post([FromBody] Recipe recipe)
     {
         try
@@ -27,6 +26,35 @@ public class RecipesCommand : ControllerBase
         catch (Exception e)
         {
             return BadRequest("Product with similar name exists");
+        } 
+    }
+    
+    [EnableCors("MyOrigin")]
+    [HttpPut]
+    public IActionResult Put([FromBody] Recipe recipe)
+    {
+        try
+        {
+            return Ok( _recipesCollection.ModifyRecipe(recipe));
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Can't modify recipe that is not in the list");
+        } 
+    }
+    
+    [EnableCors("MyOrigin")]
+    [HttpDelete]
+    [Route("{name}")]
+    public IActionResult Delete([FromRoute] string name)
+    {
+        try
+        {
+            return Ok( _recipesCollection.RemoveRecipe(name));
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Cant find recipe with such name");
         } 
     }
 }

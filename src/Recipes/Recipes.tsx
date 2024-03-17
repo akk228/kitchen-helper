@@ -6,7 +6,15 @@ import { GetRecipes } from "./RecipesApi/GetRecipes";
 interface IRecipes {
     recipes: IRecipe[]
 }
-export class Recipes extends React.Component<{}, IRecipes>{
+export class Recipes extends React.Component<any, IRecipes>{
+    constructor(props: any){
+        super(props)
+        this.state = { recipes: []}
+    }
+
+    getAllRecipes(): void {
+        GetRecipes.getAllRecipes((content: IRecipe[]) => this.setState({recipes: content}))
+    }
 
     render(): React.ReactNode {
         return (
@@ -15,9 +23,11 @@ export class Recipes extends React.Component<{}, IRecipes>{
                 List of recipes
             </h1>
             <div>
-                {this.state?.recipes?.map(recipe => {
+                {this.state.recipes.map((recipe: IRecipe) => {
                     return (
-                        <Recipe {...recipe}/>
+                        <Recipe
+                            recipe={recipe}
+                            onChange={this.getAllRecipes.bind(this)}/>
                         );
                 })}
             </div>
@@ -25,8 +35,6 @@ export class Recipes extends React.Component<{}, IRecipes>{
     }
 
     componentDidMount(): void {
-        GetRecipes.getAllRecipes((content: IRecipe[]) => {
-            this.setState({ recipes: content })
-        })
+       this.getAllRecipes();
     }
 }
