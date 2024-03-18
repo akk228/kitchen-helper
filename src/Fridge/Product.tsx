@@ -17,7 +17,7 @@ export class Product extends Component<{callback: any, product: IProduct, edit: 
         return  {product: props.product, edit: props.edit};
     }
 
-    handleDelete(event: any){
+    handleDelete(){
         UpdateFridgeContent.deleteProduct(this.state.product, this.props.callback, undefined);
         
     }
