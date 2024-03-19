@@ -4,13 +4,17 @@ import '../App.css';
 
 interface IProductTableProps{
     products: IProduct[],
-    onProductsChange: () => void
+    onProductsChange: (product: IProduct) => void
     edit: boolean
 }
 
 export default class ProductTable extends React.Component<IProductTableProps, IProduct[]>{
     static getDerivedStateFromProps(props: IProduct[], state: IProduct[]){
         return  props;
+    }
+
+    handleProductChange(product: IProduct){
+        this.props.onProductsChange(product)
     }
 
     render(): React.ReactNode {
@@ -25,7 +29,7 @@ export default class ProductTable extends React.Component<IProductTableProps, IP
                 this.props.products?.map( product => 
                     {return <Product 
                         product={product} 
-                        callback={this.props.onProductsChange}
+                        onProductChange={this.handleProductChange.bind(this, product)}
                         edit={this.props.edit}
                     />})
                 }

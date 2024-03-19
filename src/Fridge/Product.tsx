@@ -8,18 +8,21 @@ export interface IProduct {
     measurmentUnit: Units;
 }
 
-export class Product extends Component<{callback: any, product: IProduct, edit: boolean}, {product: IProduct, edit: boolean}>{
-   constructor(props:{callback: any, product: IProduct, edit: boolean}){
-    super(props)
-   }
+interface IProductProps {
+    product: IProduct,
+    edit: boolean,
+    onProductChange: (product: IProduct) => void
+}
 
-    static getDerivedStateFromProps(props: {callback: any, product: IProduct, edit: boolean}, state: {product: IProduct, edit: boolean}){
+export class Product extends Component<IProductProps, {product: IProduct, edit: boolean}>{
+
+    static getDerivedStateFromProps(props: IProductProps, state: {product: IProduct, edit: boolean}){
         return  {product: props.product, edit: props.edit};
     }
 
-    handleDelete(){
-        UpdateFridgeContent.deleteProduct(this.state.product, this.props.callback, undefined);
-        
+    handleProductChange(){
+        this.props.onProductChange(this.state.product);
+        // UpdateFridgeContent.deleteProduct(this.state.product, this.props.callback, undefined);
     }
 
     render(): React.ReactNode {
@@ -31,7 +34,7 @@ export class Product extends Component<{callback: any, product: IProduct, edit: 
                 {
                     this.state.edit &&
                     <td>
-                        <button onClick={this.handleDelete.bind(this)}>x</button>
+                        <button onClick={this.handleProductChange.bind(this)}>x</button>
                     </td>
                 }
             </tr>

@@ -35,6 +35,16 @@ class Fridge extends Component<any, IFridgeState> {
         FridgeContent.getFridgecontent((content: any) => this.setState({ products: content, addEnabled: false }));
     }
 
+    handleDeleteProduct(product: IProduct){
+        UpdateFridgeContent.deleteProduct(
+            product, 
+            () => this.setState({
+                products: this.state.products.filter(x => 
+                    x.name.toLowerCase() !== product.name.toLowerCase())
+            }),
+            undefined);
+    }
+
     public render(): React.ReactNode {
         return (
             <div className="centered-div">
@@ -48,7 +58,7 @@ class Fridge extends Component<any, IFridgeState> {
                 />}
                 <ProductTable 
                     products={this.state.products} 
-                    onProductsChange={this.handleStateChange.bind(this)}
+                    onProductsChange={this.handleDeleteProduct.bind(this)}
                     edit={true}
                 />
             </div>

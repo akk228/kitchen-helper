@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { IProduct } from "./Product";
 import Units from "../Entities/Units";
-import { UpdateFridgeContent } from "./FridgeApi/UpdateProducts";
 
 interface IAddProductFormProps {
   onAdd: (product: IProduct) => void

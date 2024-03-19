@@ -1,32 +1,33 @@
+import { callbackify } from "util";
 import { IRecipe } from "../Recipe";
 
 export default class UpdateRecipes 
 {
 
-    static add(recipe: IRecipe, getNewRecipeCollection: () => void): void
+    static add(recipe: IRecipe, callBack: () => void): void
     {
         const url = "/Recipes";
+        const body =  JSON.stringify(recipe);
         fetch(
             url,
             {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
                 method: "POST",
                 mode: "cors",
-                body: JSON.stringify(recipe),
+                body: body,
+            
             }
         ).then( result => {
-            return result.json()})
-        .then(
-            result => {
-                if(result.status === 200) {
-                    getNewRecipeCollection()
-                }else{
-                    alert("Such recipe exists already.")
-                }
-            },
-            failure => {
-                alert("Failed to add recipe")
+            if(result.status === 200) {
+                callBack();
+            }else{
+                alert("Such recipe exists already.")
             }
-        );
+            },
+            failure => alert("failed"));
     }
     
     static put(callback: () => void): void

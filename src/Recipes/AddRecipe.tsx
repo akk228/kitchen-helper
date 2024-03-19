@@ -3,10 +3,16 @@ import { IRecipe } from "./Recipe";
 import ProductTable from "../Fridge/ProductTable";
 import { AddProductForm } from "../Fridge/AddProduct";
 import { IProduct } from "../Fridge/Product";
+import UpdateRecipes from "./RecipesApi/UpdateRecipes";
+import { Link } from "react-router-dom";
 
 interface IAddRecipeFormState {
     recipe: IRecipe,
     addProductEnabled: boolean
+}
+
+interface AddRecipeProps {
+    callback: () => void
 }
 
 export default class AddRecipeForm extends React.Component<any, IAddRecipeFormState> {
@@ -37,14 +43,27 @@ export default class AddRecipeForm extends React.Component<any, IAddRecipeFormSt
             });
     }
 
-    handleDeleteProduct(): void {
-
+    handleDeleteProduct(product: IProduct): void {
+        this.setState( {recipe:
+        {
+            ...this.state.recipe,
+            ingredients: this.state.recipe.ingredients.filter(x => x.name.toLocaleLowerCase() !== product.name.toLowerCase())
+        }})
     }
+
+    saveRecipe(): void {
+        UpdateRecipes.add(this.state.recipe, ()=>{});
+    }
+
 
     render(): React.ReactNode {
         return (
             <div className="centered-div">
             <form>
+                <Link to="/recipes">
+                    <button type="submit" onClick={this.saveRecipe.bind(this)}>Add recipe</button>
+                </Link>
+                <br/>
                 <label>Name</label>
                 <br />
                 <input
@@ -67,7 +86,6 @@ export default class AddRecipeForm extends React.Component<any, IAddRecipeFormSt
                     rows={5}
                     cols={50}
                 />
-                
             </form>
             <button
                 onClick={this.handleAddEnabled.bind(this)}>
