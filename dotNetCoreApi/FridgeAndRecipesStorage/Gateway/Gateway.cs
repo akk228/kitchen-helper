@@ -22,8 +22,8 @@ public class Gateway<T>
         _storageDirectoryRelativePath = StorageRelativePath + storageName + Storage;
         _storageRelativePath = _storageDirectoryRelativePath + storageName + StorageFileExtension;
     }
-
-    public IEnumerable<T> OpenFetchClose()
+    
+    public IEnumerable<T> Select()
     {
         if (State == GatewayState.Free)
         {
@@ -36,7 +36,7 @@ public class Gateway<T>
         }
     }
     
-    public IEnumerable<T> OpenUpdateClose(IEnumerable<T> data)
+    public IEnumerable<T> Update(IEnumerable<T> data)
     {
         lock (Lock)
         {

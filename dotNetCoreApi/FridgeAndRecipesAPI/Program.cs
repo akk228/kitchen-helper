@@ -1,6 +1,7 @@
 using FridgeAPI = FridgeAndRecipesAPI;
 using FridgeAndRecipesStorage.Fridge;
 using System.Text.Json.Serialization;
+using FridgeAndRecipesStorage.Gateway;
 using FridgeAndRecipesStorage.Recipies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<Fridge>(new Fridge());
+builder.Services.AddSingleton<Fridge>();
 builder.Services.AddSingleton<RecipesCollection>(new RecipesCollection());
+
+builder.Services.AddTransient(typeof(Gateway<>));
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 

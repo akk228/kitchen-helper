@@ -1,91 +1,87 @@
-﻿namespace FridgeAndRecipesStorage.Fridge;
+﻿using FridgeAndRecipesStorage.Gateway;
 
-public class Fridge : IFridge
+namespace FridgeAndRecipesStorage.Fridge;
+
+public class Fridge
 {
+    private readonly Gateway<Product> _fridgeGateway;
     private Dictionary<string, Product> _products;
-    private readonly Object _lock = new object();
     
-    public Fridge()
+    public Fridge(Gateway<Product> fridgeGateway)
     {
-        _products = FridgeGateway
-            .OpenFridge()
-            .GetAllProducts()
-            .ToDictionary(
-                item => item.Name,
-                item => item,
-                StringComparer.OrdinalIgnoreCase);
-
+        _fridgeGateway = fridgeGateway;
+        _products = new Dictionary<string, Product>();
     }
     
-    public Fridge(IEnumerable<Product> products)
-    {
-        _products = products.ToDictionary(
-            item => item.Name,
-            item => item,
-            StringComparer.OrdinalIgnoreCase);
-    }
-
     public IEnumerable<Product> GetAllProducts()
     {
-        lock (_lock)
-        {
-            return _products.Select(x => x.Value);   
-        }
+        return _fridgeGateway.Select();
     }
-    public Product? FindProduct(string name)
+    public IEnumerable<Product> FindProducts(string name)
     {
-        lock (_lock)
-        {
-            _products.TryGetValue(name, out Product? product);
-            return product;
-        }
+        return _fridgeGateway
+            .Select()
+            .Where(x =>
+                x.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
     }
     public Product AddProduct(Product product)
     {
-        lock (_lock)
-        {
-            var updatedProduct =  AddProductInternal(product);
-
-            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
-            
-            return updatedProduct;
-        }
+        _products = _fridgeGateway.Select()
+            .ToDictionary(
+                x=> x.Name,
+                x => x,
+                StringComparer.OrdinalIgnoreCase);
+        
+        AddProductInternal(product);
+        
+        _fridgeGateway.Update(_products.Select(x=> x.Value));
+        
+        return _products[product.Name];
     }
     
     public void WithdrawProduct(string productName)
     {
-        lock (_lock)
-        {
-            if (!_products.Remove(productName))
-            {
-                throw new Exception("Can't remove product that isn't in the Fridge");
-            }
+        var products = _fridgeGateway.Select()
+            .ToDictionary(
+                x=> x.Name,
+                x => x,
+                StringComparer.OrdinalIgnoreCase);
 
-            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
+        if (!products.Remove(productName))
+        {
+            throw new Exception("No such product");
         }
+
+        _fridgeGateway.Update(products.Select(x => x.Value));
     }
 
-    public IEnumerable<Product> AddProducts(IEnumerable<Product> products)
+    public IEnumerable<Product> AddProducts(IEnumerable<Product> productsToAdd)
     {
-        lock (_lock)
+        _products = _fridgeGateway.Select()
+            .ToDictionary(
+                x=> x.Name,
+                x => x,
+                StringComparer.OrdinalIgnoreCase);
+        
+        foreach (var product in productsToAdd)
         {
-            var productsList = new List<Product>();
-        
-            foreach (var product in products)
-            {
-                productsList.Add(AddProductInternal(product));
-            }
-        
-            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
-        
-            return productsList;   
+            AddProductInternal(product);
         }
+
+        var newProductList = _products.Select(x => x.Value).ToList();
+        
+        _fridgeGateway.Update(newProductList);
+        
+        return newProductList;
     }
 
     public IEnumerable<Product> TakeProducts(IEnumerable<Product> products)
     {
-        lock (_lock)
-        {
+        _products = _fridgeGateway.Select()
+            .ToDictionary(
+                x=> x.Name,
+                x => x,
+                StringComparer.OrdinalIgnoreCase);
             var productsList = new List<Product>();
 
             foreach(var product in products)
@@ -104,10 +100,10 @@ public class Fridge : IFridge
                     _products[product.Name] = product;
                 }
             }
-            FridgeGateway.FridgeUpdate(_products.Select(x => x.Value));
 
-            return productsList;   
-        }
+            _fridgeGateway.Update(_products.Select(x => x.Value));
+            
+            return productsList;
     }
     
     private Product TakeProduct(Product productToUse)
@@ -129,12 +125,18 @@ public class Fridge : IFridge
         throw new Exception("No such product, or not enough");
     }
     
-    private Product AddProductInternal(Product product)
+    private void AddProductInternal(Product product)
     {
         if (!_products.TryAdd(product.Name, product))
         {
-            _products[product.Name].Amount += product.Amount;
+            if (_products[product.Name].MeasurmentUnit == product.MeasurmentUnit)
+            {
+                _products[product.Name].Amount += product.Amount;
+            }
+            else
+            {
+                throw new Exception("Incorrect units");
+            }
         }
-        return _products[product.Name];
     }
 }
