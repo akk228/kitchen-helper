@@ -32,12 +32,13 @@ public class Fridge : IFridge
             return _products.Select(x => x.Value);   
         }
     }
+
     public Product? FindProduct(string name)
     {
         lock (_lock)
         {
             _products.TryGetValue(name, out Product? product);
-            return product;
+            return product;   
         }
     }
     public Product AddProduct(Product product)

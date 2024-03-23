@@ -33,9 +33,11 @@ namespace FridgeAndRecipesStorage.Recipies
         {
             var fullPath = Path.GetFullPath(RelativePath);
 
-            using var updateRecipeCollection = File.CreateText(fullPath);
-            var JSONRecipeCollection = JsonSerializer.Serialize(recipeCollection);
-            updateRecipeCollection.Write(JSONRecipeCollection);
+            using (var updateRecipeCollection = File.CreateText(fullPath))
+            {
+                var JSONRecipeCollection = JsonSerializer.Serialize(recipeCollection);
+                updateRecipeCollection.Write(JSONRecipeCollection);
+            }
         }
     }
 }
