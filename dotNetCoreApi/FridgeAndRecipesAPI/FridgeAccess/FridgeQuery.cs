@@ -24,8 +24,8 @@ public class FridgeQuery : ControllerBase
     [EnableCors("MyOrigin")]
     [HttpGet]
     [Route("Product")]
-    public Product? Get(string name)
+    public IEnumerable<Product> Get(string name)
     {
-        return _fridge.FindProduct(name);
+        return _fridge.FindProducts(name);
     }
 }
