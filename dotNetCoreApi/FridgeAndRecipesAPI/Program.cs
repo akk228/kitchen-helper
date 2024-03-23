@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<Fridge>();
+builder.Services.AddTransient<Fridge>();
 builder.Services.AddSingleton<RecipesCollection>(new RecipesCollection());
 
 builder.Services.AddTransient(typeof(Gateway<>));
