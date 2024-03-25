@@ -10,11 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<Fridge>();
-builder.Services.AddSingleton<RecipesCollection>(new RecipesCollection());
+builder.Services.AddTransient<RecipesCollection>();
 
 builder.Services.AddTransient(typeof(Gateway<>));
 
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.ConfigureHttpJsonOptions(options => 
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddCors(options =>
 {
@@ -24,6 +25,7 @@ builder.Services.AddCors(options =>
                           builder.WithOrigins("http://localhost:3000");
                       });
 });// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddCors(options => 
     options.AddDefaultPolicy(policy => 
         policy.WithOrigins("http://localhost:3000")

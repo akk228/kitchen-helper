@@ -10,7 +10,7 @@ public class Fridge
     public Fridge(Gateway<Product> fridgeGateway)
     {
         _fridgeGateway = fridgeGateway;
-        _products = new Dictionary<string, Product>();
+        _products = new Dictionary<string, Product>(StringComparer.OrdinalIgnoreCase);
     }
     
     public IEnumerable<Product> GetAllProducts()
