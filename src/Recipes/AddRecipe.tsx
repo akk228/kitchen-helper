@@ -86,15 +86,10 @@ export default class AddRecipeForm extends React.Component<any, IAddRecipeFormSt
                     rows={5}
                     cols={50}
                 />
-            </form>
-            <button
-                onClick={this.handleAddEnabled.bind(this)}>
-                {!this.state.addProductEnabled ? 'Add product' : 'Cancel'}
-            </button>
-            {this.state.addProductEnabled && 
+            </form>            
             <AddProductForm 
                 onAdd={this.handleAddProduct.bind(this)} 
-            />}
+            />
             {this.state.recipe.ingredients.length !== 0 &&
                 <ProductTable
                     products={this.state.recipe.ingredients}

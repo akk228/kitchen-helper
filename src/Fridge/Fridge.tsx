@@ -48,16 +48,9 @@ class Fridge extends Component<any, IFridgeState> {
     public render(): React.ReactNode {
         return (
             <div className="centered-div">
-                <button
-                    onClick={this.handleAddItemMenu.bind(this)}>
-                    {!this.state.addEnabled ? 'Add product' : 'Cancel'}
-                </button>
-                {
-                this.state.addEnabled && 
                 <AddProductForm 
                     onAdd={this.handleAddProduct.bind(this)} 
                 />
-                }
                 <ProductTable 
                     products={this.state.products} 
                     onProductsChange={this.handleDeleteProduct.bind(this)}
