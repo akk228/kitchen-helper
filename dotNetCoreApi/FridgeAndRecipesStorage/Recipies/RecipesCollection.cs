@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using FridgeAndRecipesStorage.Gateway;
+﻿using FridgeAndRecipesStorage.Gateway;
 
 namespace FridgeAndRecipesStorage.Recipies
 {
