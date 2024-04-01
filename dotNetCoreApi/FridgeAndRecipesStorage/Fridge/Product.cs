@@ -1,14 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using FridgeAndRecipesStorage.Enums;
 
 namespace FridgeAndRecipesStorage.Fridge;
-
-public enum Units
-{
-    gr = 0,
-    ml = 1,
-    unit = 2
-}
 
 public class Product
 {
