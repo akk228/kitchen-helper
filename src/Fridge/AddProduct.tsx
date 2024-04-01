@@ -9,7 +9,7 @@ interface IAddProductFormProps {
 export class AddProductForm extends Component<IAddProductFormProps, IProduct> {
   constructor(props: any) {
     super(props);
-    this.state = { name: "", amount: 0, measurmentUnit: "gr" };
+    this.state = { name: "", amount: 0, measurmentUnit: Units.gr };
   }
 
   state: IProduct;
@@ -50,12 +50,12 @@ export class AddProductForm extends Component<IAddProductFormProps, IProduct> {
               value={this.state.measurmentUnit}
               onChange={(e) => {
                 e.preventDefault();
-                this.setState({ measurmentUnit: e.target.value as Units });
+                this.setState({ measurmentUnit: e.target.value as unknown as Units });
               }}
             >
-              <option value={"gr"}>gr</option>
-              <option value={"ml"}>ml</option>
-              <option value={"unit"}>item</option>
+              <option value={Units.gr}>gr</option>
+              <option value={Units.ml}>ml</option>
+              <option value={Units.unit}>item</option>
             </select>
           </label>
           <button type="submit">Add</button>
