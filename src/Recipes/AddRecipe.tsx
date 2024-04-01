@@ -89,7 +89,7 @@ export default class AddRecipeForm extends React.Component<any, IAddRecipeFormSt
             </form>
             <button
                 onClick={this.handleAddEnabled.bind(this)}>
-                {!this.state.addProductEnabled ? 'Add Item' : 'Cancel'}
+                {!this.state.addProductEnabled ? 'Add product' : 'Cancel'}
             </button>
             {this.state.addProductEnabled && 
             <AddProductForm 

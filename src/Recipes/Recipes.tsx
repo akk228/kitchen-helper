@@ -19,17 +19,15 @@ export class Recipes extends React.Component<any, IRecipes>{
     render(): React.ReactNode {
         return (
         <div className="centered-div">
-            <h1>
-                List of recipes
-            </h1>
+            <h1>List of recipes</h1>
             <div>
-                {this.state.recipes.map((recipe: IRecipe) => {
+                {this.state.recipes
+                .map((recipe: IRecipe) => {
                     return (
                         <Recipe
                             recipe={recipe}
                             onChange={this.getAllRecipes.bind(this)}/>
-                        );
-                })}
+                        )})}
             </div>
         </div>)
     }
