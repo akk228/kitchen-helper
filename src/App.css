@@ -73,3 +73,24 @@ nav a:hover {
   max-width: 400px; /* Adjust this value as needed */
   padding: 20px; /* Adding padding for spacing */
 }
+
+.content {
+  z-index: 1; /* Ensure the main content is behind the overlay */
+}
+
+.overlay {
+  margin: 0 auto;
+  position: fixed;
+  top: 30%;
+  padding: 20px; /* Adding padding for spacing */
+  width: 30%;
+  height: 40%;
+  background-color: rgba(24, 144, 184, 0.85); /* Semi-transparent black background */
+  color: rgb(39, 50, 41);
+  z-index: 9999; /* Ensure the overlay appears on top of other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6); /* Shadow */
+}
