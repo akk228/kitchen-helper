@@ -2,6 +2,7 @@ using FridgeAPI = FridgeAndRecipesAPI;
 using FridgeAndRecipesStorage.Fridge;
 using System.Text.Json.Serialization;
 using FridgeAndRecipesStorage.Gateway;
+using FridgeAndRecipesStorage.KitchenHelper;
 using FridgeAndRecipesStorage.Recipies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddTransient<Fridge>();
 builder.Services.AddTransient<RecipesCollection>();
+builder.Services.AddTransient<KitchenHelper>();
 
 builder.Services.AddTransient(typeof(Gateway<>));
 
