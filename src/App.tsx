@@ -5,6 +5,7 @@ import Home from './Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { Recipes } from './Recipes/Recipes';
 import AddRecipeForm from './Recipes/AddRecipe';
+import ReadyToGoRecipes from './KitchenHelper/ReadyToGoRecipes';
 
 export default class App extends Component {
   render (){
@@ -28,6 +29,9 @@ export default class App extends Component {
             <li>
               <Link to="/recipes/add">Add recipe</Link>
             </li>
+            <li>
+              <Link to="/Ready2Go">Ready to go dishes</Link>
+            </li>
           </ul>
         </nav>
         </div>
@@ -37,6 +41,7 @@ export default class App extends Component {
           <Route path="/recipes" element={<Recipes/>}/>
           <Route path="/" element={<Home/>}/>
           <Route path="/recipes/add" element={<AddRecipeForm/>}/>
+          <Route path="/Ready2Go" element={<ReadyToGoRecipes/>}/>
         </Routes>
       
        

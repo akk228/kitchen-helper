@@ -36,7 +36,9 @@ export class Recipe extends React.Component<IRecipeProps,IRecipe> {
                         onProductsChange={()=> {}}
                         edit={false}
                     />
-                <Cooking {...this.state}/>
+                <Cooking 
+                    recipe={ this.props.recipe}
+                    callback={this.props.onChange}/>
             </article>
         );
     }

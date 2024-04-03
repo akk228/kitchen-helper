@@ -18,6 +18,7 @@ export class Cook {
         .then(result => {
                 if(result.status === 200){
                     alert("Ingredients taken, get to cooking!");
+                    callbackOnSuccess();
                     return result;
                 }else{
                     alert("Not enought products");

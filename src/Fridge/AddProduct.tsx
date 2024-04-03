@@ -29,6 +29,7 @@ export class AddProductForm extends Component<IAddProductFormProps, IAddProductF
   handleSubmit(event: any) {
     event.preventDefault();
     this.props.onAdd(this.state.product);
+    this.setState({enabled: !this.state.enabled})
   }
 
   render(): React.ReactNode {

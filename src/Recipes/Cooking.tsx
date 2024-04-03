@@ -6,14 +6,19 @@ interface ICooking{
     recipe: IRecipe
 }
 
-export class Cooking extends React.Component<IRecipe, ICooking>{
+interface ICookingProps{
+    recipe: IRecipe,
+    callback: ()=>void
+}
 
-    static getDerivedStateFromProps(props: IRecipe, state: ICooking){
-        return { recipe: props};
+export class Cooking extends React.Component<ICookingProps, ICooking>{
+
+    static getDerivedStateFromProps(props: ICookingProps, state: ICooking){
+        return { recipe: props.recipe};
     }
 
     handleTakeIngredients(){
-        Cook.takeProducts(this.state.recipe.ingredients, ()=>{}, undefined)
+        Cook.takeProducts(this.state.recipe.ingredients, this.props.callback, undefined)
     }
 
     render(): React.ReactNode {
